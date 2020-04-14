@@ -14,6 +14,6 @@ export class GameFieldComponent {
   }
 
   shouldRenderBlankItem = (x, y) => {
-    return x === 0 || x === 12 || y === 0 || y === 12 || x === 1 && (y === 11 || y === 1) || y === 1 && (x === 1 || x === 11);
+    return x === 0 || x === 12 || y === 0 || y === 12 || x === 1 && y === 11 || x === 1 && y === 1 || y === 1 && x === 11 || x === 11 && y === 11;
   }
 }
