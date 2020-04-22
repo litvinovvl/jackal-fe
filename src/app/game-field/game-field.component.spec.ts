@@ -35,10 +35,10 @@ describe('GameFieldComponent', () => {
     });
   });
 
-  describe('initial game field', () => {
-    it('should render blank field items for corners and first/last columns/rows', () => {
+  describe('game field', () => {
+    it('should render sea field items for corners and first/last columns/rows', () => {
       const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
-      const isBlankField = (item: Element) => expect(item.getAttribute('src')).toBe('../../assets/img/sea.svg');
+      const isSea = (item: Element) => expect(item.getAttribute('src')).toBe('../../assets/img/sea.svg');
 
       fieldRows.forEach((row, x) => {
         const fieldItems = row.querySelectorAll('img.field-item');
@@ -46,7 +46,7 @@ describe('GameFieldComponent', () => {
         if (x === 0 || x === 12) {
           fieldItems.forEach((item, y) => {
             if (y !== 6) {
-              isBlankField(item);
+              isSea(item);
             }
           });
         }
@@ -54,7 +54,7 @@ describe('GameFieldComponent', () => {
         if (x === 1 || x === 11) {
           fieldItems.forEach((item, y) => {
             if (y === 0 || y === 1 || y === 11 || y === 12) {
-              isBlankField(item);
+              isSea(item);
             }
           });
         }
@@ -62,7 +62,7 @@ describe('GameFieldComponent', () => {
         if (x !== 0 && x !== 1 && x !== 11 && x !== 12 && x !== 6) {
           fieldItems.forEach((item, y) => {
             if (y === 0 || y === 12) {
-              isBlankField(item);
+              isSea(item);
             }
           });
         }
@@ -117,6 +117,155 @@ describe('GameFieldComponent', () => {
           });
         }
       });
+    });
+
+    it('should randomly set image on click by field items and set isOpened flag to true', () => {
+      const initialFieldItems = [
+        {
+          name: 'test1',
+          imageURL: 'test1',
+          balance: 1
+        },
+        {
+          name: 'test2',
+          imageURL: 'test2',
+          balance: 1
+        }
+      ];
+
+      fixture.componentInstance.fieldItems = initialFieldItems;
+      fixture.detectChanges();
+
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const fieldItem = fieldRows[5].querySelectorAll('p')[5];
+
+      fieldItem.click();
+      fixture.detectChanges();
+
+      const updatedFieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const firstImg = updatedFieldRows[5].querySelectorAll('img')[5].getAttribute('src');
+      expect(firstImg).not.toBe('../../assets/img/default.svg');
+
+      fixture = TestBed.createComponent(GameFieldComponent);
+      fixture.detectChanges();
+
+      const newFieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const newFieldItem = newFieldRows[5].querySelectorAll('img')[5];
+
+      newFieldItem.click();
+      fixture.detectChanges();
+
+      const newUpdatedFieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const secondImg = newUpdatedFieldRows[5].querySelectorAll('img')[5].getAttribute('src');
+      expect(secondImg).not.toBe('../../assets/img/default.svg');
+      expect(secondImg).not.toEqual(firstImg);
+    });
+
+    it('should not randomly set image on click by sea fields', () => {
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const isSeaAferClick = (item: HTMLParagraphElement, x: number, y: number) => {
+        item.click();
+        fixture.detectChanges();
+        const updatedFieldRow: HTMLElement = fixture.nativeElement.querySelectorAll('.field-row')[x];
+        const updatedFieldItem = updatedFieldRow.querySelectorAll('img')[y];
+        expect(updatedFieldItem.getAttribute('src')).toBe('../../assets/img/sea.svg');
+      };
+
+      fieldRows.forEach((row, x) => {
+        const fieldItems = row.querySelectorAll('p');
+
+        if (x === 0 || x === 12) {
+          fieldItems.forEach((item, y) => {
+            if (y !== 6) {
+              isSeaAferClick(item, x, y);
+            }
+          });
+        }
+
+        if (x === 1 || x === 11) {
+          fieldItems.forEach((item, y) => {
+            if (y === 0 || y === 1 || y === 11 || y === 12) {
+              isSeaAferClick(item, x, y);
+            }
+          });
+        }
+
+        if (x !== 0 && x !== 1 && x !== 11 && x !== 12 && x !== 6) {
+          fieldItems.forEach((item, y) => {
+            if (y === 0 || y === 12) {
+              isSeaAferClick(item, x, y);
+            }
+          });
+        }
+      });
+    });
+
+    it('should not randomly set image on click by ship fields', () => {
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const isShipAfterClick = (item: HTMLParagraphElement, x: number, y: number) => {
+        item.click();
+        fixture.detectChanges();
+        const updatedFieldRow: HTMLElement = fixture.nativeElement.querySelectorAll('.field-row')[x];
+        const updatedFieldItem = updatedFieldRow.querySelectorAll('img')[y];
+        expect(updatedFieldItem.getAttribute('src')).toBe('../../assets/img/ship.svg');
+      };
+
+      fieldRows.forEach((row, x) => {
+        const fieldItems = row.querySelectorAll('p');
+
+        if (x === 0 || x === 12) {
+          fieldItems.forEach((item, y) => {
+            if (y === 6) {
+              isShipAfterClick(item, x, y);
+            }
+          });
+        }
+
+        if (x === 6) {
+          fieldItems.forEach((item, y) => {
+            if (y === 0 || y === 12) {
+              isShipAfterClick(item, x, y);
+            }
+          });
+        }
+      });
+    });
+
+    it('should decrease used field items', () => {
+      const initialFieldItems = [{
+        name: 'test',
+        imageURL: 'test',
+        balance: 2
+      }];
+
+      fixture.componentInstance.fieldItems = initialFieldItems;
+
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const fieldItem = fieldRows[5].querySelectorAll('p')[5];
+
+      fieldItem.click();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.fieldItems[0].balance).toBe(1);
+    });
+
+    it('should delete used field items if balance is 0', () => {
+      const initialFieldItems = [{
+        name: 'test',
+        imageURL: 'test',
+        balance: 1
+      }];
+
+      fixture.componentInstance.fieldItems = initialFieldItems;
+      fixture.detectChanges();
+
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const fieldItem = fieldRows[5].querySelectorAll('p')[5];
+
+      fieldItem.click();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.fieldItems.length).toBe(0);
     });
   });
 });
