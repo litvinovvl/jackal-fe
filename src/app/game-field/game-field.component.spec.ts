@@ -167,7 +167,7 @@ describe('GameFieldComponent', () => {
         item.click();
         fixture.detectChanges();
         const updatedFieldRow: HTMLElement = fixture.nativeElement.querySelectorAll('.field-row')[x];
-        const updatedFieldItem = updatedFieldRow.querySelectorAll('img')[y];
+        const updatedFieldItem = updatedFieldRow.querySelectorAll('img.field-item')[y];
         expect(updatedFieldItem.getAttribute('src')).toBe('../../assets/img/sea.svg');
       };
 
@@ -206,7 +206,7 @@ describe('GameFieldComponent', () => {
         item.click();
         fixture.detectChanges();
         const updatedFieldRow: HTMLElement = fixture.nativeElement.querySelectorAll('.field-row')[x];
-        const updatedFieldItem = updatedFieldRow.querySelectorAll('img')[y];
+        const updatedFieldItem = updatedFieldRow.querySelectorAll('img.field-item')[y];
         expect(updatedFieldItem.getAttribute('src')).toBe('../../assets/img/ship.svg');
       };
 
@@ -266,6 +266,23 @@ describe('GameFieldComponent', () => {
       fixture.detectChanges();
 
       expect(fixture.componentInstance.fieldItems.length).toBe(0);
+    });
+
+    it('should render players pieces in default fields', () => {
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const player1 = fieldRows[0].querySelectorAll('p')[6];
+      const pieces1 = player1.querySelectorAll('img.player-piece')
+      const player2 = fieldRows[6].querySelectorAll('p')[0];
+      const pieces2 = player2.querySelectorAll('img.player-piece.green')
+      const player3 = fieldRows[6].querySelectorAll('p')[12];
+      const pieces3 = player3.querySelectorAll('img.player-piece.orange')
+      const player4 = fieldRows[12].querySelectorAll('p')[6];
+      const pieces4 = player4.querySelectorAll('img.player-piece.blue')
+
+      expect(pieces1.length).toBe(3);
+      expect(pieces2.length).toBe(3);
+      expect(pieces3.length).toBe(3);
+      expect(pieces4.length).toBe(3);
     });
   });
 });

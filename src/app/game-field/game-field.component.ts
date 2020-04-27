@@ -14,9 +14,61 @@ export class GameFieldComponent {
   public fieldItems = fieldItems;
   public field: field = Array(13).fill(Array(13).fill({ img: null, isOpened: false }));
   public shipsCoords = [[0, 6], [6, 0], [6, 12], [12, 6]];
+  public playersCoords = [
+    {
+      1: [0, 6],
+      2: [0, 6],
+      3: [0, 6]
+    },
+    {
+      1: [6, 0],
+      2: [6, 0],
+      3: [6, 0]
+    },
+    {
+      1: [6, 12],
+      2: [6, 12],
+      3: [6, 12]
+    },
+    {
+      1: [12, 6],
+      2: [12, 6],
+      3: [12, 6]
+    }
+  ];
 
   shouldRenderShipItem = (x, y) => {
     return this.shipsCoords.find(item => item[0] === x && item[1] === y);
+  }
+
+  shouldRenderPlayerItem = (x, y) => {
+    const coords = this.playersCoords.map(item => Object.keys(item).map(key => item[key])).flat();
+
+    return coords.filter(item => item[0] === x && item[1] === y);
+  }
+
+  shouldRenderFirstPlayerItem = (x, y) => {
+    const coords = Object.keys(this.playersCoords[0]).map(key => this.playersCoords[0][key]);
+
+    return coords.filter(item => item[0] === x && item[1] === y);
+  }
+
+  shouldRenderSecondPlayerItem = (x, y) => {
+    const coords = Object.keys(this.playersCoords[1]).map(key => this.playersCoords[1][key]);
+
+    return coords.filter(item => item[0] === x && item[1] === y);
+  }
+
+  shouldRenderThirdPlayerItem = (x, y) => {
+    const coords = Object.keys(this.playersCoords[2]).map(key => this.playersCoords[2][key]);
+
+    return coords.filter(item => item[0] === x && item[1] === y);
+  }
+
+  shouldRenderFourthPlayerItem = (x, y) => {
+    const coords = Object.keys(this.playersCoords[3]).map(key => this.playersCoords[3][key]);
+
+    return coords.filter(item => item[0] === x && item[1] === y);
   }
 
   openItem = (x, y) => {
