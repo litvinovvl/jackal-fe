@@ -1,6 +1,12 @@
 <div ngClass="container">
   <div *ngFor="let row of field; let x = index" ngClass="field-row">
     <p *ngFor="let item of row; let y = index" (click)="openItem(x, y)">
+      <span *ngIf="shouldRenderPlayerItem(x, y)" ngClass="player-pieces-container">
+        <img *ngFor="let i of shouldRenderFirstPlayerItem(x, y)" ngClass="player-piece" src="../../assets/img/player-piece.svg">
+        <img *ngFor="let i of shouldRenderSecondPlayerItem(x, y)" ngClass="player-piece green" src="../../assets/img/player-piece.svg">
+        <img *ngFor="let i of shouldRenderThirdPlayerItem(x, y)" ngClass="player-piece orange" src="../../assets/img/player-piece.svg">
+        <img *ngFor="let i of shouldRenderFourthPlayerItem(x, y)" ngClass="player-piece blue" src="../../assets/img/player-piece.svg">
+      </span>
       <ng-container 
         [ngTemplateOutlet]="item.isOpened ? openedItems : closedItems" 
         [ngTemplateOutletContext]="{item: item, x: x, y: y}">
