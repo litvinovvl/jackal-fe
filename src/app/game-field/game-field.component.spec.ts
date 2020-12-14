@@ -119,7 +119,7 @@ describe('GameFieldComponent', () => {
       });
     });
 
-    it('should randomly set image on click by field items and set isOpened flag to true', () => {
+    it('should randomly set image on click by field items and set isOpened flag to true if player item is selected', () => {
       const initialFieldItems = [
         {
           name: 'test1',
@@ -134,6 +134,11 @@ describe('GameFieldComponent', () => {
       ];
 
       fixture.componentInstance.fieldItems = initialFieldItems;
+      fixture.componentInstance.selectedPlayerItem = {
+        ...fixture.componentInstance.playersCoords[1][1],
+        player: 1,
+        item: 1
+      };
       fixture.detectChanges();
 
       const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
@@ -145,20 +150,6 @@ describe('GameFieldComponent', () => {
       const updatedFieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
       const firstImg = updatedFieldRows[5].querySelectorAll('img')[5].getAttribute('src');
       expect(firstImg).not.toBe('../../assets/img/default.svg');
-
-      fixture = TestBed.createComponent(GameFieldComponent);
-      fixture.detectChanges();
-
-      const newFieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
-      const newFieldItem = newFieldRows[5].querySelectorAll('img')[5];
-
-      newFieldItem.click();
-      fixture.detectChanges();
-
-      const newUpdatedFieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
-      const secondImg = newUpdatedFieldRows[5].querySelectorAll('img')[5].getAttribute('src');
-      expect(secondImg).not.toBe('../../assets/img/default.svg');
-      expect(secondImg).not.toEqual(firstImg);
     });
 
     it('should not randomly set image on click by sea fields', () => {
@@ -237,7 +228,11 @@ describe('GameFieldComponent', () => {
         imageURL: 'test',
         balance: 2
       }];
-
+      fixture.componentInstance.selectedPlayerItem = {
+        ...fixture.componentInstance.playersCoords[1][1],
+        player: 1,
+        item: 1
+      };
       fixture.componentInstance.fieldItems = initialFieldItems;
 
       const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
@@ -257,6 +252,11 @@ describe('GameFieldComponent', () => {
       }];
 
       fixture.componentInstance.fieldItems = initialFieldItems;
+      fixture.componentInstance.selectedPlayerItem = {
+        ...fixture.componentInstance.playersCoords[1][1],
+        player: 1,
+        item: 1
+      };
       fixture.detectChanges();
 
       const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
@@ -271,7 +271,7 @@ describe('GameFieldComponent', () => {
     it('should render players pieces in default fields', () => {
       const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
       const player1 = fieldRows[0].querySelectorAll('p')[6];
-      const pieces1 = player1.querySelectorAll('img.player-piece')
+      const pieces1 = player1.querySelectorAll('img.player-piece.red')
       const player2 = fieldRows[6].querySelectorAll('p')[0];
       const pieces2 = player2.querySelectorAll('img.player-piece.green')
       const player3 = fieldRows[6].querySelectorAll('p')[12];
@@ -283,6 +283,22 @@ describe('GameFieldComponent', () => {
       expect(pieces2.length).toBe(3);
       expect(pieces3.length).toBe(3);
       expect(pieces4.length).toBe(3);
+    });
+
+    it('should select players pieces on click', () => {
+      const fieldRows: HTMLElement[] = fixture.nativeElement.querySelectorAll('.field-row');
+      const player = fieldRows[0].querySelectorAll('p')[6];
+      const pieces = player.querySelectorAll('img');
+      const piece = pieces[0];
+
+      piece.click();
+      fixture.detectChanges();
+
+      const updatedPlayer = fieldRows[0].querySelectorAll('p')[6];
+      const updatedPieces = updatedPlayer.querySelectorAll('img');
+      const updatedPiece = updatedPieces[0];
+      
+      expect(updatedPiece.classList.contains('selected')).toBe(true);
     });
   });
 });
