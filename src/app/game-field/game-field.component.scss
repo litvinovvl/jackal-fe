@@ -6,7 +6,7 @@
 
   .field-row {
     display: flex;
-    height: 64px;
+    height: 58px;
     margin-top: 1px;
 
     > p {
@@ -15,7 +15,7 @@
     }
 
     .field-item {
-      width: 64px;
+      width: 58px;
       margin-left: 1px;
     }
 
@@ -23,7 +23,7 @@
       display: flex;
       position: absolute;
       justify-content: center;
-      width: 64px;
+      width: 58px;
 
       .player-piece {
         height: 24px;
@@ -38,6 +38,10 @@
 
         &.orange {
           filter: invert(0) sepia(1) saturate(10) hue-rotate(360deg) brightness(1);
+        }
+
+        &.selected {
+          filter: invert(0) sepia(1) saturate(0) hue-rotate(0deg) brightness(1);
         }
       }
     }

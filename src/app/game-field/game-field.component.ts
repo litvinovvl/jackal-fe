@@ -14,68 +14,45 @@ export class GameFieldComponent {
   public fieldItems = fieldItems;
   public field: field = Array(13).fill(Array(13).fill({ img: null, isOpened: false }));
   public shipsCoords = [[0, 6], [6, 0], [6, 12], [12, 6]];
-  public playersCoords = [
-    {
-      1: [0, 6],
-      2: [0, 6],
-      3: [0, 6]
+  public playersCoords = {
+    1: {
+      1: { x: 0, y: 6 },
+      2: { x: 0, y: 6 },
+      3: { x: 0, y: 6 },
     },
-    {
-      1: [6, 0],
-      2: [6, 0],
-      3: [6, 0]
+    2: {
+      1: { x: 6, y: 0 },
+      2: { x: 6, y: 0 },
+      3: { x: 6, y: 0 },
     },
-    {
-      1: [6, 12],
-      2: [6, 12],
-      3: [6, 12]
+    3: {
+      1: { x: 6, y: 12 },
+      2: { x: 6, y: 12 },
+      3: { x: 6, y: 12 },
     },
-    {
-      1: [12, 6],
-      2: [12, 6],
-      3: [12, 6]
+    4: {
+      1: { x: 12, y: 6 },
+      2: { x: 12, y: 6 },
+      3: { x: 12, y: 6 },
     }
-  ];
+  };
+  public selectedPlayerItem = null;
 
   shouldRenderShipItem = (x, y) => {
     return this.shipsCoords.find(item => item[0] === x && item[1] === y);
   }
 
   shouldRenderPlayerItem = (x, y) => {
-    const coords = this.playersCoords.map(item => Object.keys(item).map(key => item[key])).flat();
+    const coords = Object.keys(this.playersCoords).map(key => Object.keys(this.playersCoords[key]).map(itemKey => ({ ...this.playersCoords[key][itemKey], player: Number(key), item: Number(itemKey) }))).flat();
 
-    return coords.filter(item => item[0] === x && item[1] === y);
-  }
-
-  shouldRenderFirstPlayerItem = (x, y) => {
-    const coords = Object.keys(this.playersCoords[0]).map(key => this.playersCoords[0][key]);
-
-    return coords.filter(item => item[0] === x && item[1] === y);
-  }
-
-  shouldRenderSecondPlayerItem = (x, y) => {
-    const coords = Object.keys(this.playersCoords[1]).map(key => this.playersCoords[1][key]);
-
-    return coords.filter(item => item[0] === x && item[1] === y);
-  }
-
-  shouldRenderThirdPlayerItem = (x, y) => {
-    const coords = Object.keys(this.playersCoords[2]).map(key => this.playersCoords[2][key]);
-
-    return coords.filter(item => item[0] === x && item[1] === y);
-  }
-
-  shouldRenderFourthPlayerItem = (x, y) => {
-    const coords = Object.keys(this.playersCoords[3]).map(key => this.playersCoords[3][key]);
-
-    return coords.filter(item => item[0] === x && item[1] === y);
+    return coords.filter(item => item.x === x && item.y === y);
   }
 
   openItem = (x, y) => {
     const isSea = this.shouldRenderBlankItem(x, y) && !this.shouldRenderShipItem(x, y);
     const isShip = this.shouldRenderShipItem(x, y);
-  
-    if (!isSea && !isShip && !this.field[x][y].isOpened) {
+
+    if (!isSea && !isShip && !this.field[x][y].isOpened && this.selectedPlayerItem) {
       const randomFieldItemIndex = Math.floor(Math.random() * this.fieldItems.length);
       const img = this.fieldItems[randomFieldItemIndex].imageURL;
       this.fieldItems[randomFieldItemIndex].balance -= 1;
@@ -87,7 +64,18 @@ export class GameFieldComponent {
       const updatedField = this.field.map((row, index) => index === x ? updatedRow : row);
 
       this.field = updatedField;
+
+      this.movePlayerItem(x, y);
+    } else if (this.field[x][y].isOpened && this.selectedPlayerItem) {
+      this.movePlayerItem(x, y);
     }
+  }
+
+  movePlayerItem = (x, y) => {
+    const { player, item } = this.selectedPlayerItem;
+    this.playersCoords[player][item] = { ...this.playersCoords[player][item], x, y }
+    this.selectedPlayerItem = null;
+    this.openItem(x, y);
   }
 
   shouldRenderBlankItem = (x, y) => {
@@ -100,5 +88,26 @@ export class GameFieldComponent {
     && y === 1 || y === 1
     && x === 11 || x === 11
     && y === 11;
+  }
+
+  getClassName = item => {
+    let className = 'player-piece';
+
+    if (this.selectedPlayerItem) {
+      const { x, y, item: itemIdx } = this.selectedPlayerItem;
+      if (item.x === x && item.y === y && item.item === itemIdx) {
+        className = className + ' selected';
+      }
+    }
+
+    const playerColors = [' red', ' green', ' orange', ' blue'];
+    className = className + playerColors[item.player - 1];
+
+    return className;
+  }
+
+  handlePlayerItemSelection = (e, item) => {
+    e.stopPropagation();
+    this.selectedPlayerItem = item;
   }
 }
