@@ -1,12 +1,12 @@
 <div ngClass="container">
-  <div *ngFor="let row of field; let x = index" ngClass="field-row">
-    <p *ngFor="let item of row; let y = index" (click)="openItem(x, y)">
-      <span *ngIf="shouldRenderPlayerItem(x, y)" ngClass="player-pieces-container">
+  <div *ngFor="let row of gameFieldService.field; let x = index" ngClass="field-row">
+    <p *ngFor="let item of row; let y = index" (click)="gameFieldService.openItem(x, y)">
+      <span *ngIf="gameFieldService.shouldRenderPlayerItem(x, y)" ngClass="player-pieces-container">
         <img
-          *ngFor="let i of shouldRenderPlayerItem(x, y)"
+          *ngFor="let i of gameFieldService.shouldRenderPlayerItem(x, y)"
           [ngClass]="getClassName(i)"
           src="../../assets/img/player-piece.svg"
-          (click)="handlePlayerItemSelection($event, i)">
+          (click)="gameFieldService.handlePlayerItemSelection($event, i)">
         </span>
       <ng-container 
         [ngTemplateOutlet]="item.isOpened ? openedItems : closedItems" 
@@ -21,7 +21,19 @@
 </ng-template>
 
 <ng-template #closedItems let-x="x" let-y="y">
-  <img *ngIf="!shouldRenderBlankItem(x, y) && !shouldRenderShipItem(x, y)" src="../../assets/img/default.svg" alt="field-item" ngClass="field-item">
-  <img *ngIf="shouldRenderBlankItem(x, y) && !shouldRenderShipItem(x, y)" src="../../assets/img/sea.svg" alt="field-item" ngClass="field-item">
-  <img *ngIf="shouldRenderShipItem(x, y)" src="../../assets/img/ship.svg" alt="field-item" ngClass="field-item">
+  <img
+    *ngIf="!gameFieldService.shouldRenderBlankItem(x, y) && !gameFieldService.shouldRenderShipItem(x, y)"
+    src="../../assets/img/default.svg"
+    alt="field-item"
+    ngClass="field-item">
+  <img
+    *ngIf="gameFieldService.shouldRenderBlankItem(x, y) && !gameFieldService.shouldRenderShipItem(x, y)"
+    src="../../assets/img/sea.svg"
+    alt="field-item"
+    ngClass="field-item">
+  <img
+    *ngIf="gameFieldService.shouldRenderShipItem(x, y)"
+    src="../../assets/img/ship.svg"
+    alt="field-item"
+    ngClass="field-item">
 </ng-template>
