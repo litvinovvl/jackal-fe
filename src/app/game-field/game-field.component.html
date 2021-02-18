@@ -1,6 +1,8 @@
 <div ngClass="container">
   <div *ngFor="let row of gameFieldService.field; let x = index" ngClass="field-row">
-    <p *ngFor="let item of row; let y = index" (click)="gameFieldService.openItem(x, y)">
+    <p
+      *ngFor="let item of row; let y = index"
+      (click)="gameFieldService.selectedPlayerItem && gameFieldService.handleItemClick(x, y)">
       <span *ngIf="gameFieldService.shouldRenderPlayerItem(x, y)" ngClass="player-pieces-container">
         <img
           *ngFor="let i of gameFieldService.shouldRenderPlayerItem(x, y)"

@@ -14,8 +14,8 @@ export class GameFieldComponent {
     let className = 'player-piece';
 
     if (this.gameFieldService.selectedPlayerItem) {
-      const { x, y, item: itemIdx } = this.gameFieldService.selectedPlayerItem;
-      if (item.x === x && item.y === y && item.item === itemIdx) {
+      const { x, y, player: playerIdx, item: itemIdx } = this.gameFieldService.selectedPlayerItem;
+      if (item.x === x && item.y === y && item.item === itemIdx && item.player === playerIdx) {
         className = className + ' selected';
       }
     }
