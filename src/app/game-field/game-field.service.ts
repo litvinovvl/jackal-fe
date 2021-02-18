@@ -62,34 +62,59 @@ export class GameFieldService {
     return coords.filter(item => item.x === x && item.y === y);
   }
 
-  openItem = (x, y) => {
+  handleItemClick = (x, y) => {
     const isSea = this.shouldRenderBlankItem(x, y) && !this.shouldRenderShipItem(x, y);
     const isShip = this.shouldRenderShipItem(x, y);
+    const prevCoords = { x: this.selectedPlayerItem.x, y: this.selectedPlayerItem.y };
+    const { x: prevX, y: prevY } = this.selectedPlayerItem;
+    const { x: shipX, y: shipY } = this.shipsCoords[this.selectedPlayerItem.player];
+    const prevIsShip = prevX === shipX && prevY === shipY;
+    const prevIsSea = this.shouldRenderBlankItem(prevX, prevY) && !this.shouldRenderShipItem(prevX, prevY);
+    const isNear = (
+      x >= prevCoords.x - 1 && x <= prevCoords.x + 1
+    ) && (
+      y >= prevCoords.y - 1 && y <= prevCoords.y + 1
+    );
+    const isCorner =
+      ((x === 0 || x === 12) && y < 2 || (x === 0 && y > 10)) ||
+      ((x === 1 || x === 11) && (y === 0 || y === 12)) ||
+      (x === 12 && (y === 12 || y === 11));
 
-    if (!isSea && !isShip && !this.field[x][y].isOpened && this.selectedPlayerItem) {
-      const randomFieldItemIndex = Math.floor(Math.random() * this.fieldItems.length);
-      const img = this.fieldItems[randomFieldItemIndex].imageURL;
-      this.fieldItems[randomFieldItemIndex].balance -= 1;
+    if (!isNear) return;
 
-      if (!this.fieldItems[randomFieldItemIndex].balance) {
-        this.fieldItems.splice(randomFieldItemIndex, 1);
-      }
-      const updatedRow = this.field[x].map((item, index) => index === y ? { img, isOpened: true } : item);
-      const updatedField = this.field.map((row, index) => index === x ? updatedRow : row);
-
-      this.field = updatedField;
-
+    if (!isSea && !isShip && !this.field[x][y].isOpened && !prevIsSea) {
+      this.openItem(x, y);
       this.movePlayerItem(x, y);
-    } else if (this.field[x][y].isOpened && this.selectedPlayerItem) {
+    } else if (
+      isSea && !isCorner &&
+      (prevIsShip || prevIsSea)
+    ) {
+      this.movePlayerItem(x, y);
+    } else if (isShip && (shipX === x && shipY === y)) {
+      this.movePlayerItem(x, y);
+    } else if (this.field[x][y].isOpened && !prevIsSea) {
       this.movePlayerItem(x, y);
     }
+  }
+
+  openItem = (x, y) => {
+    const randomFieldItemIndex = Math.floor(Math.random() * this.fieldItems.length);
+    const img = this.fieldItems[randomFieldItemIndex].imageURL;
+    this.fieldItems[randomFieldItemIndex].balance -= 1;
+
+    if (!this.fieldItems[randomFieldItemIndex].balance) {
+      this.fieldItems.splice(randomFieldItemIndex, 1);
+    }
+    const updatedRow = this.field[x].map((item, index) => index === y ? { img, isOpened: true } : item);
+    const updatedField = this.field.map((row, index) => index === x ? updatedRow : row);
+
+    this.field = updatedField;
   }
 
   movePlayerItem = (x, y) => {
     const { player, item } = this.selectedPlayerItem;
     this.playersCoords[player][item] = { ...this.playersCoords[player][item], x, y }
     this.selectedPlayerItem = null;
-    this.openItem(x, y);
   }
 
   handlePlayerItemSelection = (e, item) => {
